@@ -252,7 +252,10 @@ with tabs[0]:
 
         try:
             with st.spinner("Running GL analysis..."):
-                results_df = analyze_from_gl_file(cur_path, prev_path)
+                try:
+                    results_df = analyze_from_gl_file(cur_path, prev_path)
+                except Exception as e:
+                    raise RuntimeError(f"GL analysis failed: {e}")
 
             ok, issues = validate_input_df(results_df)
             if not ok:

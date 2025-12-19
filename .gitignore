@@ -1,0 +1,13 @@
+archive/*
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+env/*
+venv/*
+ENV/*
+env
+token.txt
