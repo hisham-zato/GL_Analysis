@@ -40,7 +40,27 @@ def load_gl_data(gl_path):
 
     # Convert CSV to temporary Excel file
     temp_excel_path = os.path.splitext(gl_path)[0] + '_temp.xlsx'
-    df_csv = pd.read_csv(csv_path, dtype={ACCOUNT_CODE: str})
+    
+    # Try reading CSV with different encodings
+    encodings = ['utf-8', 'latin1']
+    df_csv = None
+    
+    for encoding in encodings:
+        try:
+            df_csv = pd.read_csv(
+                csv_path,
+                dtype={ACCOUNT_CODE: str},
+                encoding=encoding
+            )
+            print(f"Successfully read CSV with encoding: {encoding}")
+            break
+        except UnicodeDecodeError:
+            print(f"Failed to read CSV with encoding: {encoding}, trying next...")
+            continue
+    
+    if df_csv is None:
+        raise ValueError(f"Failed to read CSV with any of the encodings: {encodings}")
+
 
     df_csv.columns = ["" if col.startswith("Unnamed") else col for col in df_csv.columns]
     df_csv.to_excel(temp_excel_path, index=False)

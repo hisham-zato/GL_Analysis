@@ -7,7 +7,7 @@ import streamlit as st
 from deviation_engine import DeviationConfig, build_deviation_report, validate_input_df
 from abc_main import analyze_from_gl_file
 from help_md import HELP_MD
-
+import traceback
 
 # -----------------------------
 # Page setup
@@ -284,10 +284,16 @@ with tabs[0]:
 
 
         except Exception as e:
+            print(traceback.format_exc())
+            st.session_state["analysis_ok"] = False
+            st.session_state["analysis_df"] = None
+            st.session_state["analysis_error"] = str(e)
+            st.session_state["analysis_traceback"] = traceback.format_exc()
+
             st.session_state["report_df"] = None
             st.session_state["report_ready"] = False
             st.session_state["report_error"] = str(e)
-            st.error("Run failed.")
+            st.error("Run failed: " + str(e))
 
     if not st.session_state["results_stale"]:
         st.success(f"Processed {len(st.session_state['analysis_df'])} accounts. Flagged {len(st.session_state['report_df'])} accounts.")
